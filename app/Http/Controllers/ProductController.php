@@ -23,7 +23,7 @@ class ProductController extends Controller
         $data = [];
         $data['categories'] = Category::all();
 
-        return view('product.create')->with('data', $data);
+        return view('admin.products.create')->with('data', $data);
     }
 
     public function store(Request $request)
@@ -113,7 +113,7 @@ class ProductController extends Controller
     
         $data = [];
         $data['products'] =  Product::withCount('items')->orderBy('items_count', 'desc')->take(3)->get();
-                                    
+                                
 
         return view('product.index')->with('data', $data);
     }

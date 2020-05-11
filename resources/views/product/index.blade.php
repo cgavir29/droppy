@@ -6,7 +6,7 @@
 <div class="container">
     <form method="GET" action="{{ route('product.search') }}">
         <div class="input-group mb-3">
-            <input type="search" class="form-control" name="search" placeholder="Search">
+            <input type="search" class="form-control" name="search" placeholder="{{ __('products.search') }}">
             <div class="input-group-append">
                 <span class="form-group-btn">
                     <button type="submit" class="btn btn-primary">{{ __('buttons.search') }}</button>
@@ -28,7 +28,7 @@
                     <img class="card-img-top" src="{{ URL::asset('storage/' . $product->getImage()) }}"
                         alt="{{ $product->getImage() }}" height="380" width="540">
                     <div class="card-body">
-                        <h5 class="card-title">{{ $product->getName() }}</h5>
+                        <h5 class="card-title font-weight-bold">{{ $product->getName() }}</h5>
                         <p class="card-text">{{ $product->getDescription() }}</p>
                         <a href="{{ route('product.show', $product->getId()) }}"
                             class="btn btn-primary">{{ __('products.moreInfo') }}</a>
