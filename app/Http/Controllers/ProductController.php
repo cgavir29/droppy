@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Category;
 use App\Product;
 use App\Comment;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Http\Request;
 use App\Interfaces\ImageStorage;
 
@@ -23,7 +24,7 @@ class ProductController extends Controller
         $data = [];
         $data['categories'] = Category::all();
 
-        return view('admin.products.create')->with('data', $data);
+        return view('admin.product.create')->with('data', $data);
     }
 
     public function store(Request $request)
@@ -57,7 +58,7 @@ class ProductController extends Controller
         $data['product'] = Product::findOrFail($productId);
         $data['categories'] = Category::all();
 
-        return view('product.edit')->with('data', $data);
+        return view('admin.product.edit')->with('data', $data);
     }
 
     public function update(Request $request, $productId)
@@ -101,19 +102,49 @@ class ProductController extends Controller
 
     public function mostComments()
     {
-    
-        $data = [];
-        $data['products'] =  Product::withCount('comments')->orderBy('comments_count', 'desc')->take(3)->get();
 
-        return view('product.index')->with('data', $data);
+        $data = [];
+        //$data['products'] = Product::withCount('comments')->orderBy('comments_count', 'desc')->take(3)->get();
+        $data['products'] = Product::has('comments')->withCount('comments')->orderBy('comments_count', 'desc')->take(3)->get();
+        if(sizeof($data['products'])>0){
+            return view('product.index')->with('data', $data);
+        }
+        else{
+            return redirect()->back()->with('status', Lang::get('messages.notComments'));
+        }
+        
     }
 
     public function topProducts()
     {
-    
+
         $data = [];
-        $data['products'] =  Product::withCount('items')->orderBy('items_count', 'desc')->take(3)->get();
-                                
+       // $data['products'] = Product::withCount('items')->orderBy('items_count', 'desc')->take(3)->get();
+       $data['products'] = Product::has('items')->withCount('items')->orderBy('items_count', 'desc')->take(3)->get();
+       if(sizeof($data['products'])>0){
+           return view('product.index')->with('data', $data);
+       }
+       else{
+           return redirect()->back()->with('status', Lang::get('messages.notSales'));
+       }
+    }
+
+    public function topCategory()
+    {
+        $data = [];
+
+        $categories = Product::all()->groupBy('categoryId');
+        $topCat = null;
+        $topVal = 0;
+
+        foreach ($categories as $category) {
+            if (sizeof($category) > $topVal) {
+                $topVal = sizeof($category);
+                $topCat = $category;
+            }
+        }
+
+        $data['products'] = $topCat;
 
         return view('product.index')->with('data', $data);
     }
